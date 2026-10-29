@@ -1,0 +1,136 @@
+name: "Issue 447: link underline screenshots"
+
+on:
+  push:
+    branches: [ci/447-link-underline-screenshots]
+    paths:
+      - .github/visual-447/**
+      - .github/workflows/visual-447.yml
+      - crates/nsh-base/src/text_view/view.rs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-447-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CARGO_INCREMENTAL: "0"
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_PROFILE_TEST_DEBUG: "0"
+  RUSTUP_TOOLCHAIN: "1.97.1"
+
+jobs:
+  capture:
+    name: Capture (${{ matrix.target }})
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { target: linux, os: ubuntu-24.04 }
+          - { target: macos, os: macos-15 }
+          - { target: windows, os: windows-latest }
+          - { target: ios, os: macos-15 }
+          - { target: android, os: ubuntu-24.04 }
+          - { target: web, os: ubuntu-24.04 }
+          - { target: gpui, os: ubuntu-24.04 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install comparison renderer
+        run: python -m pip install Pillow==12.2.0
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang llvm libclang-dev libgtk-4-dev libwebkitgtk-6.0-dev xvfb
+      - name: Install GPUI dependencies
+        if: matrix.target == 'gpui'
+        run: |
+          sudo apt-get install -y libasound2-dev libfontconfig-dev libfreetype-dev libssl-dev \
+            libvulkan1 mesa-vulkan-drivers libwayland-dev libx11-xcb-dev libxcb1-dev \
+            libxkbcommon-dev libxkbcommon-x11-dev libzstd-dev libgtk-3-dev libwebkit2gtk-4.1-dev \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+      - name: Set up Windows
+        if: runner.os == 'Windows'
+        run: |
+          echo 'LIBCLANG_PATH=C:\Program Files\LLVM\bin' >> "$GITHUB_ENV"
+          echo 'RUST_MIN_STACK=268435456' >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: "1.97.1"
+      - name: Install platform targets
+        run: |
+          case "${{ matrix.target }}" in
+            ios) rustup target add aarch64-apple-ios-sim ;;
+            android) rustup target add x86_64-linux-android ;;
+            web) rustup target add wasm32-unknown-unknown ;;
+          esac
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: visual-447-${{ matrix.target }}
+          workspaces: |
+            . -> target
+            crates/gpui -> ../../target
+      - name: Set up Android Java
+        if: matrix.target == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android platform and KVM
+        if: matrix.target == 'android'
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-35' 'build-tools;35.0.0'
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Build the CLI
+        run: cargo build -p nsh-cli --locked
+      - name: Capture desktop and web backends
+        if: matrix.target != 'android' && matrix.target != 'ios'
+        env:
+          GDK_SCALE: "2"
+          GSK_RENDERER: cairo
+          AR_wasm32_unknown_unknown: llvm-ar
+          WEBKIT_DISABLE_DMABUF_RENDERER: "1"
+        run: |
+          case "${{ matrix.target }}" in
+            linux|gpui) dbus-run-session -- xvfb-run -a -s '-screen 0 1800x1800x24' python .github/visual-447/capture.py "${{ matrix.target }}" ;;
+            *) python .github/visual-447/capture.py "${{ matrix.target }}" ;;
+          esac
+      - name: Capture the iOS simulator
+        if: matrix.target == 'ios'
+        run: |
+          xcodebuild -version
+          xcrun simctl list devices available
+          python .github/visual-447/capture.py ios
+      - name: Capture the Android emulator
+        if: matrix.target == 'android'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: python .github/visual-447/capture.py android
+      - name: Upload screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-underline-${{ matrix.target }}
+          path: out/visual-447/${{ matrix.target }}/
+          if-no-files-found: warn
+          retention-days: 14

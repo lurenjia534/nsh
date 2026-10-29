@@ -2,7 +2,7 @@ name: "Issue 447: link underline screenshots"
 
 on:
   push:
-    branches: [ci/447-link-underline-screenshots]
+    branches: [ci/447-link-underline-android]
     paths:
       - .github/visual-447/**
       - .github/workflows/visual-447.yml
@@ -34,13 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { target: linux, os: ubuntu-24.04 }
-          - { target: macos, os: macos-15 }
-          - { target: windows, os: windows-latest }
-          - { target: ios, os: macos-15 }
           - { target: android, os: ubuntu-24.04 }
-          - { target: web, os: ubuntu-24.04 }
-          - { target: gpui, os: ubuntu-24.04 }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

@@ -85,6 +85,7 @@ def main():
                 "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                 "source_sha256": {v: hashlib.sha256(data).hexdigest() for v, data in [("before", baseline), ("after", fixed)]},
                 "note": "Captures and semantic assertions require visual review; they do not assert underline visibility."}
+    metadata["android_build_workaround"] = "CI-only: ignore Command::Tokens in the Android encoder to unblock the baseline build. Applied identically before and after; excluded from the proposed #447 fix."
     (out / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     failures = []
     try:

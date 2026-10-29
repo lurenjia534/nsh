@@ -1,0 +1,108 @@
+TextView #447: cross-platform underline verification
+
+Issue: https://github.com/longbridge/nsh/issues/447
+Original checkout baseline: 730af4491c63a92947f0f2fd8f0fc9350dbae8a0
+Proposed fix branch: fix/text-view-link-underline-447
+Proposed fix: 2 files, +2/-3; production change removes only the default 3pt link underline offset.
+CI-only fixtures and build workarounds are kept on separate verification branches.
+
+RESULT
+
+70 selected capture tests passed: seven backends, five cases per backend,
+before and after. Every selected job produced ten original screenshots and
+five annotated comparisons. Screenshots were visually reviewed separately
+from the semantic test results.
+
+Observed in the reported 11pt font / 15pt line-height case, using each
+backend's system font:
+
+macOS / AppKit / CoreText: final-line underline missing before, visible after.
+Windows / Win32 / DirectWrite: final-line underline missing before, visible after.
+Linux / GTK 4 / Pango on Ubuntu: partial final-line underline before, full line after.
+GPUI on Linux: partial final-line underline before, full line after.
+iOS simulator / UIKit / CoreText: visible in both; the automatic position is closer to the text.
+Android emulator / StaticLayout: visible in both; the automatic position is closer to the text. See qualification below.
+Web / Chrome: visible in both; the automatic position is closer to the text.
+
+The original local Linux capture used Noto Sans on Arch Linux and reproduced
+complete loss of the final-line underline before the fix. Differences between
+fonts and backends explain why the same size/line height can show either no
+line, a partial line, or a complete but lower line.
+
+DEFAULTS, INHERITANCE AND EXPLICIT OVERRIDES
+
+All seven backends were captured with:
+1. Reported compact text: 11pt / 15pt.
+2. Default typography: 15pt / 25.5pt.
+3. Explicit Link offset: 1.5pt with 11pt / 15pt.
+4. Inherited Root offset: 1.5pt with 11pt / 15pt.
+5. Root offset 2pt plus explicit Link offset 1.5pt with 11pt / 15pt.
+
+The default-typography underlines remain visible on all seven backends.
+For every backend, the entire sample cards in cases 3 and 5 are pixel-identical
+before and after. After the fix, the text body in case 4 is pixel-identical to
+case 3, and case 5's body also matches case 3. These checks exercise rendered
+inheritance and precedence, rather than asserting a particular internal offset
+representation. See control-checks.json and each pixel-comparison.json.
+
+Each capture test checks the resolved font size and that underline styling is
+enabled, then saves a real backend screenshot. An enabled underline style alone
+does not prove its visible pixels; the screenshot review establishes the
+observations above.
+
+CI RUNS AND QUALIFICATIONS
+
+Initial seven-backend run:
+https://github.com/lurenjia534/nsh/actions/runs/40840035316
+Commit: 92d19712eaee1e73807869f5f3e71d3c58deae68
+Linux, GPUI, macOS, iOS and Web jobs succeeded. The overall run failed because
+of the two issues below. It must not be described as an entirely green run.
+
+Android follow-up (successful):
+https://github.com/lurenjia534/nsh/actions/runs/40841422569
+Commit: 3d3949f7e1bfeb600a3b039be67cd179a0f21ed7
+The unmodified Android encoder in the baseline fails to compile with E0004:
+Command::Tokens(_) is missing from its match. The verification branch adds a
+CI-only `Command::Tokens(_) => e.int(-1)` arm to unblock the build. The same
+arm is present in BOTH before and after builds. It is excluded from the
+proposed #447 fix. Android's successful captures are therefore qualified
+comparison evidence, not proof that stock baseline Android builds pass.
+Original failure logs are in android/; successful captures are in android-retry/.
+
+Windows follow-up (successful):
+https://github.com/lurenjia534/nsh/actions/runs/40842040867
+Commit: f13685f6f7debd0d5acd0a04abf3bf757347b7a6
+The original Windows run passed all ten native capture tests and saved the
+screenshots, but Python's redirected console encoding failed when printing
+NSH's checkmark in the log. The follow-up sets UTF-8 output and recaptures both
+versions successfully. It contains no additional production change.
+Original logs are in windows/; final captures are in windows-retry/.
+
+All seven selected results have the same before/after TextView source SHA256
+pair. See run.json for source hashes, commits, host OS descriptions and links.
+The only varying TextView production line is `.underline_offset(px(3.0))`.
+Android's common build workaround is disclosed separately above.
+
+ARTIFACTS
+
+cross-platform-summary-en.png: annotated final-line comparison across seven backends.
+cross-platform-summary-en.svg: editable vector source embedding the original crops.
+all-defaults-review.png: before/after overview of default typography.
+<backend>/before-<case>.png and after-<case>.png: original native/browser screenshots.
+<backend>/comparison-<case>.png: annotated side-by-side crops with magnification.
+<backend>/metadata.json: source hashes, host environment, case settings and commit.
+<backend>/before-capture.log and after-capture.log: actual NSH test output.
+control-checks.json: exact pixel checks for explicit offsets and inherited/overridden bodies.
+run.json: selected result directories and CI provenance.
+
+The annotations add frames and captions and enlarge source crops without
+smoothing. They do not redraw text or underlines. Original screenshots are
+included for verification.
+
+SCOPE
+
+These are light-mode, system-font captures of the five cases above. iOS and
+Android are simulator/emulator results. GPUI was run on Linux. This does not
+claim coverage of physical devices, every font, dark mode, the full workspace
+test suite, clippy or the compatibility suite. The first run's platform build
+and harness failures are preserved rather than hidden.

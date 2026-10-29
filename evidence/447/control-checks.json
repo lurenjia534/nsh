@@ -1,0 +1,44 @@
+{
+  "macos": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "windows": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "linux": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "gpui": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "ios": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "android": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  },
+  "web": {
+    "explicit_offset_unchanged": true,
+    "explicit_offset_over_root_unchanged": true,
+    "inherited_body_matches_explicit_offset": true,
+    "link_override_body_matches_explicit_offset": true
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "status": "completed",
+  "selected_capture_tests_passed": 70,
+  "runs": [
+    {
+      "databaseId": 40840035316,
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/lurenjia534/nsh/actions/runs/40840035316",
+      "headSha": "92d19712eaee1e73807869f5f3e71d3c58deae68"
+    },
+    {
+      "databaseId": 40841422569,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/lurenjia534/nsh/actions/runs/40841422569",
+      "headSha": "3d3949f7e1bfeb600a3b039be67cd179a0f21ed7"
+    },
+    {
+      "databaseId": 40842040867,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/lurenjia534/nsh/actions/runs/40842040867",
+      "headSha": "f13685f6f7debd0d5acd0a04abf3bf757347b7a6"
+    }
+  ],
+  "backends": {
+    "macos": {
+      "directory": "macos",
+      "commit": "92d19712eaee1e73807869f5f3e71d3c58deae68",
+      "host": "macOS-15.7.9-arm64-arm-64bit",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    },
+    "windows": {
+      "directory": "windows-retry",
+      "commit": "f13685f6f7debd0d5acd0a04abf3bf757347b7a6",
+      "host": "Windows-2025Server-10.0.26100-SP0",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    },
+    "linux": {
+      "directory": "linux",
+      "commit": "92d19712eaee1e73807869f5f3e71d3c58deae68",
+      "host": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    },
+    "gpui": {
+      "directory": "gpui",
+      "commit": "92d19712eaee1e73807869f5f3e71d3c58deae68",
+      "host": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    },
+    "ios": {
+      "directory": "ios",
+      "commit": "92d19712eaee1e73807869f5f3e71d3c58deae68",
+      "host": "macOS-15.7.9-arm64-arm-64bit",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    },
+    "android": {
+      "directory": "android-retry",
+      "commit": "3d3949f7e1bfeb600a3b039be67cd179a0f21ed7",
+      "host": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": "CI-only: ignore Command::Tokens in the Android encoder to unblock the baseline build. Applied identically before and after; excluded from the proposed #447 fix."
+    },
+    "web": {
+      "directory": "web",
+      "commit": "92d19712eaee1e73807869f5f3e71d3c58deae68",
+      "host": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+      "source_sha256": {
+        "before": "8d5230ed90b212d9f36be928ec38ee204ef440001c4e2cf7b76343e7fc237ccc",
+        "after": "73379c7c5e150198109ed90ff9a2c0dd4373e0eba2fe1a255c52652d910402a7"
+      },
+      "capture_tests_passed": 10,
+      "android_build_workaround": null
+    }
+  },
+  "scope": "Five cases, two versions, seven real rendering backends. Android uses a common CI-only build workaround; see REPORT.txt."
+}

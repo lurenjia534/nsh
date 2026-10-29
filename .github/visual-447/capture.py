@@ -10,6 +10,10 @@ import shutil
 import subprocess
 import sys
 
+# Windows runners can default their redirected console to a legacy code page.
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "crates/nsh-base/src/text_view/view.rs"
 ANCHOR = b"                    .text_decoration_thickness(px(1.0))\n                    .role(AccessibilityRole::Link)"

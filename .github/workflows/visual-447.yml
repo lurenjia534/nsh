@@ -2,7 +2,7 @@ name: "Issue 447: link underline screenshots"
 
 on:
   push:
-    branches: [ci/447-link-underline-screenshots]
+    branches: [ci/447-link-underline-windows]
     paths:
       - .github/visual-447/**
       - .github/workflows/visual-447.yml
@@ -25,6 +25,7 @@ env:
   CARGO_PROFILE_DEV_DEBUG: "0"
   CARGO_PROFILE_TEST_DEBUG: "0"
   RUSTUP_TOOLCHAIN: "1.97.1"
+  PYTHONUTF8: "1"
 
 jobs:
   capture:
@@ -34,13 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { target: linux, os: ubuntu-24.04 }
-          - { target: macos, os: macos-15 }
           - { target: windows, os: windows-latest }
-          - { target: ios, os: macos-15 }
-          - { target: android, os: ubuntu-24.04 }
-          - { target: web, os: ubuntu-24.04 }
-          - { target: gpui, os: ubuntu-24.04 }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -79,6 +74,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: visual-447-${{ matrix.target }}
+          cache-on-failure: true
           workspaces: |
             . -> target
             crates/gpui -> ../../target
